@@ -12,6 +12,40 @@ class DataStore:
 
 #region Database Factories, access and manipulation
 
+def newFactory(library: str, data: dict={}):
+    conn = sqlite3.connect(DataStore.path)
+    c = conn.cursor()
+    c.execute("SELECT * FROM %s" % (library,))
+    existing_col = [x[0] for x in c.description]
+
+    listed_values = []
+    len_list = ""
+    for column in existing_col:
+        if column in data:
+            listed_values.append(data[column])
+        else:
+            listed_values.append(None)
+
+        len_list += "?,"
+
+    len_list=len_list.rstrip(',')
+    c.execute("INSERT INTO %s VALUES (%s)" % (library, len_list), (*listed_values,))
+    id = c.lastrowid
+    conn.commit()
+    conn.close()
+
+    return id
+
+def getRandom(library:str,path="./Setting Aventurien.db"):
+
+    conn=sqlite3.connect(path)
+    c=conn.cursor()
+
+    c.execute("""SELECT * FROM %s ORDER BY RANDOM()"""%(library))
+    columns= c.description
+    data=c.fetchone()
+    return data
+
 def searchFactory(text:str,library:str,innerJoin:str ="",output:str =None,  shortOut:bool= False ,
                   attributes:list=None ,Filter:dict={},OrderBy = None, searchFulltext:bool =False,
                   dictOut=False,uniqueID=True):
