@@ -40,7 +40,7 @@ def newChar(name, family=None, title =None , tags = None, notes= None, unchecked
             family_Id= familyList[0]
 
 
-    c.execute("INSERT INTO Individuals VALUES (?,?,?,?,?,?,?,?,?,?) ", (name,family_Id,title, tags, notes, unchecked, pat_lineage, mat_lineage,rel_id,sex))
+    c.execute("INSERT INTO Individuals VALUES (?,?,?,?,?,?,?,?,?,?,?) ", (None,name,family_Id,title, tags, notes, unchecked, pat_lineage, mat_lineage,rel_id,sex))
     id=c.lastrowid
     conn.commit()
 
@@ -641,7 +641,7 @@ class Family_Tree(QStackedWidget):
                 code=str(self.id)+"-"+item
                 if len(ex.searchFactory(code,'Individuals',attributes=['indiv_pat_lineage']))==0:
                     random=randint(1,50)
-                    name=ex.getFactory(random,'Forname_Kosch_male',dictOut=True)['name']
+                    name=ex.getFactory(random,'Forname_Kosch_male',path="./Setting Aventurien.db",dictOut=True)['name']
                     newChar(name=name,family_Id=self.id,pat_lineage=code,unchecked=True)
 
 
