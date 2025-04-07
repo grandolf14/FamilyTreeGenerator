@@ -7,15 +7,8 @@ import sqlite3
 
 # only for storing data, in use
 class DataStore:
-    today=None
-    now=None
-    weather=None
-    weatherNext=None
-    location=None
     path='./DSA Daten.db'
-    Settingpath='./Libraries/.AA Setting Datenbank/Setting Aventurien.db'
-    prop_path_intern="./Libraries/ProgrammData/ProgrammData.db"
-    defaultFamily=None
+
 
 #region Database Factories, access and manipulation
 

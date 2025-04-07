@@ -604,7 +604,7 @@ class Family_Tree(QStackedWidget):
                 for member in members:
                     newName='a'*(relationshipMax+2)
                     text=member['indiv_pat_lineage'].split('-')
-                    ex.updateFactory(member['rowid'],[text[0]+"-"+newName+text[1]],'Individuals',['indiv_pat_lineage'])
+                    ex.updateFactory(member['individual_ID'],[text[0]+"-"+newName+text[1]],'Individuals',['indiv_pat_lineage'])
                 relative_code = newName + relative_code
             generationMax = (generationMax + relationshipMax)
 
