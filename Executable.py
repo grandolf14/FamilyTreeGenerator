@@ -7,12 +7,26 @@ import sqlite3
 
 # only for storing data, in use
 class DataStore:
+    """returns data while in use
+
+    :param path: str
+        the current database path
+    """
     path='./DSA Daten.db'
 
 
 #region Database Factories, access and manipulation
 
 def newFactory(library: str, data: dict={}):
+    """creates new entries with given data in given table within the library at DataStore.Path
+
+    :param library: str
+        name of table
+    :param data: dict
+        dictionary with columns as keys
+    :return: ->int, the id of the newly created entry
+    """
+
     conn = sqlite3.connect(DataStore.path)
     c = conn.cursor()
     c.execute("SELECT * FROM %s" % (library,))
@@ -37,6 +51,14 @@ def newFactory(library: str, data: dict={}):
     return id
 
 def getRandom(library:str,path="./Setting Aventurien.db"):
+    """
+
+    :param library: str
+        the tablename
+    :param path: str, optional
+        the database path
+    :return: list, a random member of the database
+    """
 
     conn=sqlite3.connect(path)
     c=conn.cursor()
@@ -49,6 +71,30 @@ def getRandom(library:str,path="./Setting Aventurien.db"):
 def searchFactory(text:str,library:str,innerJoin:str ="",output:str =None,  shortOut:bool= False ,
                   attributes:list=None ,Filter:dict={},OrderBy = None, searchFulltext:bool =False,
                   dictOut=False,uniqueID=True):
+
+    """returns the sqlite database datasets
+
+    :param text: str,
+        the value/text to search for in database
+    :param library: str
+        the table to search in
+    :param innerJoin: str, optional, sqlitesyntax
+    :param output: str, optional, sqlitesyntax
+    :param shortOut: bool, optional
+        returns the saved profile matching the library
+    :param attributes: list, optional
+        specifies the list of columnnames to search the text in
+    :param Filter: dict, optional
+        specifies additional searchparameter
+    :param OrderBy: str, optional, sqlitesyntax
+    :param searchFulltext: bool, optional
+        if yes searches as well if the given searchtext is a substring of the dataitems
+    :param dictOut: bool, optional
+        if yes returns the data as dict with the column names as keys
+    :param uniqueID: bool, optional
+        if no returns items several times, if searched in multiple attributes
+    :return: ->list|dict , all datasets resembling the specified parameters
+    """
 
 
     conn=sqlite3.connect(DataStore.path)
@@ -197,6 +243,23 @@ def searchFactory(text:str,library:str,innerJoin:str ="",output:str =None,  shor
 
 
 def getFactory(id:int,library:str,output:str='*',defaultOutput:bool=False,shortOutput=False, dictOut=False, path=None):
+
+    """returns the sqlite datum with matching id
+
+    :param id: int
+        id of searched datum
+    :param library: str
+        table name
+    :param output: str, optional, sqlitesyntax
+    :param defaultOutput: bool, optional
+        returns the saved profile matching the library
+    :param shortOutput: bool, optional
+        returns the saved profile matching the library
+    :param dictOut: bool, optional
+        if yes returns the data as dict with the column names as keys
+    :param path: str, optional
+    :return: -> list|dict
+    """
     defaultOutDict= {'Families':['*',''],
                         'Individuals':['*, family_Name','INNER JOIN Families on Families.family_ID = Individuals.fKey_family_ID']}
 
@@ -235,6 +298,21 @@ def getFactory(id:int,library:str,output:str='*',defaultOutput:bool=False,shortO
         return data
 
 def updateFactory(id, texts:list,library:str,attributes:list, path=None):
+
+    """updates the specified datasets attributes with given values
+
+    :param id: str
+        sqlite id of dataset
+    :param texts: list
+        list of values to update with
+    :param library: str
+        table name
+    :param attributes:  list
+        list of columns to update
+    :param path: str, optional
+        path of database
+    :return:
+    """
     if path==None:
         path=DataStore.path
 
