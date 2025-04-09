@@ -13,8 +13,14 @@ import Executable as ex
 import sqlite3
 
 class Family_Tree(QStackedWidget):
+    """Provides the widget for showing a family tree and the methods to add or move new members
+
+    """
 
     def __init__(self):
+        """initializes the family tree widget
+
+        """
 
         self.banner = QImage('./Graphic_Library/banner3.png')
         self.banner = self.banner.scaled(130, 130, Qt.KeepAspectRatio, Qt.SmoothTransformation)
@@ -40,6 +46,7 @@ class Family_Tree(QStackedWidget):
         self.lay.addWidget(label, 0, 1, 1, 2)
 
         self.unassigned_result = Resultbox()
+
         # if standardbutton for each result is pressed, saves the name of the Charakter in self.l_sel_Person and the ID in self.saveVal
         self.unassigned_result.setPref(standardbutton=lambda: self.l_sel_Person.setText(
             str(ex.getFactory(self.sender().page, 'individuals', shortOutput=True)[
@@ -83,6 +90,12 @@ class Family_Tree(QStackedWidget):
         self.updateTreeGraph(None)
 
     def updateTreeGraph(self, id: int):
+        """recalculates the graphical depiction of the family tree
+
+        :param id: int
+            id of depicted family
+        :return: None
+        """
 
         # resets manipulation area
         self.saveVal.setText(None)
@@ -258,7 +271,19 @@ class Family_Tree(QStackedWidget):
         newHeight = min(max(view.size().height() / factor, view.size().height() // 1.5), view.size().height())
         view.fitInView(
             QtCore.QRectF(1000 - int(newWidth / 2), 1000 - int(newHeight / 2), int(newWidth), int(newHeight)))
+
     def graph_CalcPos(self, newlineage, lineage_keys, lineage_SOKeys, y):
+        """calculates the graphical positiion of each tree member
+
+        :param newlineage: list
+            the list of generations for graphical Layout
+        :param lineage_keys: list
+            the key-list of all tree members
+        :param lineage_SOKeys: list
+             the key list of all significant others
+        :param y: y
+        :return: -> dict, dictionary with the graphical position for each tree member
+        """
         posDict = {}
         for index, item in enumerate(newlineage[- 1]):
             name = item
@@ -309,6 +334,11 @@ class Family_Tree(QStackedWidget):
         return posDict
 
     def calculateLineage(self):
+
+        """ calculates the new family tree and updates all set members
+
+        :return: ->None
+        """
 
         # checks userinput for wrong/incomplete Input, sets generationMax, relationshipMax, Verwandter_ID, selbst_ID
         if self.LE_gen.text() == None or self.LE_rel.text() == None or self.QC_rel.currentIndex() == 0 or self.saveVal.text() == None:
@@ -594,6 +624,12 @@ class Family_Tree(QStackedWidget):
 
         self.updateTreeGraph(self.id)
     def noCharSet(self,sortedRes,unsorted):
+        """checks if there is any character with lineage code in family and provides one if necessary
+
+        :param sortedRes: list of character Dictionaries
+        :param unsorted: list of character Dictionaries
+        :return: -> bool, True if there was no individual with lineage code in family
+        """
         # creates first lineage code, if none of the family members has a lineage code
         if len(sortedRes) == 0 and len(unsorted) > 0:
             anchorItem = ex.getFactory(unsorted[0][0], 'Individuals', dictOut=True)
@@ -607,6 +643,11 @@ class Family_Tree(QStackedWidget):
 
         return False
     def calcGenGraph(self):
+        """calculates the generations for graphical layout
+
+        :return: newlineage: list, lineage_keys: list, lineage_SOKeys: list
+        """
+
         # region calculates generations
         lineage_keys = sorted(sorted(list(self.lineage_Infos)), key=len)
         lineage_SOKeys = []
@@ -663,6 +704,17 @@ class Family_Tree(QStackedWidget):
         return newlineage, lineage_keys, lineage_SOKeys
 
 class Resultbox(QStackedWidget):
+    """
+    Widget for dynamic display of data lists with buttons for data manipulation.
+
+    Methods
+    -------
+     setPref(self, reloadBottom=False, paintItemFrame=False, buttonList=None, spacer=True, paintLight:list=[None], standardbutton=None,standardButtonVerticalAlignment=True, ignoreIndex=[0], spacing=10, col=4)
+        defines the preferences for this Resultbox
+
+    resultUpdate(self, manualResult=None)
+        displays new Content for given data list
+    """
 
     def __init__(self):
         super().__init__()
@@ -671,6 +723,31 @@ class Resultbox(QStackedWidget):
         self.resultUpdate()
 
     def setPref(self, reloadBottom=False, paintItemFrame=False, buttonList=None, spacer=True, paintLight:list=[None], standardbutton=None,standardButtonVerticalAlignment=True, ignoreIndex=[0], spacing=10, col=4):
+        """ sets the preferences for the specific Resultbox
+
+        :param reloadBottom: Bool, optional
+                reloads the Resultbox scroll widget bottom
+        :param paintItemFrame: Bool, optional
+                adds a frame for each dataset
+        :param buttonList: list of [buttonName, function without parenthesis], optional
+                adds specified Buttons for each dataset, self.sender().page = item[0] of dataset
+        :param spacer: Bool, optional
+                adds spaceritems between the single datasets
+        :param paintLight: List of int
+                specifies which index of the Dataset should be painted in light grey
+        :param standardbutton: function without parenthesis, optional
+                defines which function to call when the button gets pressed
+        :param standardButtonVerticalAlignment: Bool, optional
+                align the contents in the button vertical [True] or horizontal [False]
+        :param ignoreIndex: list of int, optional
+                do not display the contents of each dataset with chosen index
+        :param spacing: int, optional
+                defines spacing span
+        :param col: int, optional
+                how many columns should the Resultbox have
+        :return: -> None
+        """
+
         self.buttons = buttonList
         self.spacing = spacing
         self.col = col
@@ -686,6 +763,13 @@ class Resultbox(QStackedWidget):
         self.source = source
 
     def resultUpdate(self, manualResult=None):
+        """repaints the resultbox with given data as content
+
+        :param manualResult: list of datasets, optional
+            the content of the Resultbox
+        :return: ->None
+        """
+
 
         if manualResult is None:
             result = self.source
@@ -798,9 +882,14 @@ class Resultbox(QStackedWidget):
             vbar.setValue(vbar.maximum())
 
 class MyWindow(QMainWindow):
+    """provides the main window for the application
 
+    """
     def __init__(self):
 
+        """initializes the main-window layout
+
+        """
         super().__init__()
 
         wid=QWidget()
@@ -830,6 +919,12 @@ class MyWindow(QMainWindow):
 
 
     def search(self,text):
+        """searches the database for families with given string
+
+        :param text: str
+        :return: -> None
+        """
+
         data=ex.searchFactory(text,'Families',attributes=['family_Name'],searchFulltext=True)
 
         if len(data)>1:
@@ -851,6 +946,25 @@ class MyWindow(QMainWindow):
 
 def newChar(name, family=None, title =None , tags = None, notes= None, unchecked = False, family_Id = None,
             newFamily = False, pat_lineage=None, mat_lineage=None,rel_id=None, sex = None):
+
+    """inserts a new Char into the database
+
+    :param name: str
+    :param family: int, optional
+        if you want to search any family by name
+    :param title: str, optional
+    :param tags: str, optional
+    :param notes: str, optional
+    :param unchecked: Bool, optional
+    :param family_Id: int, optional
+    :param newFamily: bool, optional
+    :param pat_lineage: str, optional
+    :param mat_lineage: str, optional
+    :param rel_id: int, optional
+    :param sex: str, optional
+
+    :return: -> id [int]
+    """
 
     conn = sqlite3.connect("DSA Daten.db")
     c = conn.cursor()
