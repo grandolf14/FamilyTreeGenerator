@@ -1,4 +1,4 @@
-# PnP Tool 
+# FamilyTreeGenerator
 
 This is a PyQt5-based desktop application for managing and visualizing family trees using a SQLite database backend. The application allows you to display, edit, and dynamically manipulate members of a family tree through a graphical interface.
 
